@@ -1,37 +1,27 @@
-function game() {
-    // Play a complete five round game
-    // Best out of five wins
+let playerScore = 0
+let computerScore = 0
 
-    let choice
-    let roundScore
-    let playerScore = 0
-
-    for (let i = 0; i < 5; ++i) {
-        do {
-            choice = prompt("Rock, Scissors, or Paper? ")
-        } while (choice.toLowerCase() !== 'rock' && choice.toLowerCase() !== 'scissors' && choice.toLowerCase() !== 'paper')
-        roundScore = playRound(choice, computerPlay())
-        playerScore += roundScore
-    }
-
-    if (playerScore > 2.5) {
-        console.log(`You won! The final score was: (You) ${playerScore} to (Computer) ${5 - playerScore}`)
-    }
-    else if (playerScore < 2.5) {
-        console.log(`You lost! The final score was: (You) ${playerScore} to (Computer) ${5 - playerScore}`)
-    }
-    else {
-        console.log(`You tied! The final score was: (You) ${playerScore} to (Computer) ${5 - playerScore}`)
-    }
+const buttons = document.querySelectorAll('.game-buttons button')
+for (button of buttons) {
+    button.addEventListener('click', (e) => {
+        if (playerScore < 5 && computerScore < 5) {
+            playRound(e.currentTarget.innerText, computerPlay())
+        }
+    })
 }
+
+const score = document.querySelector('#score')
+score.innerText = `Player: ${playerScore}\nComputer: ${computerScore}`
+
+const result = document.querySelector('#result')
+result.innerText = 'The game has begun!'
 
 function playRound(playerSelection, computerSelection) {
     // Play a single round of Rock Scissors Paper
     // Returns 1 for win, 0.5 for tie, and 0 for loss
-
-    // Capitalize the player's choice
-    playerSelection = playerSelection.charAt(0).toUpperCase() + playerSelection.slice(1).toLowerCase()
+    
     let roundResult
+    let roundScore
 
     if (playerSelection === 'Rock') {
         if (computerSelection === 'Rock') {
@@ -68,16 +58,30 @@ function playRound(playerSelection, computerSelection) {
     }
 
     if (roundResult === 'Win') {
-        console.log(`You ${roundResult}! ${playerSelection} beats ${computerSelection}.`)
-        return 1
+        result.innerText = `You ${roundResult}! ${playerSelection} beats ${computerSelection}.`
+        roundScore = 1
     }
     else if (roundResult === 'Lose') {
-        console.log(`You ${roundResult}! ${playerSelection} loses against ${computerSelection}.`)
-        return 0
+        result.innerText = `You ${roundResult}! ${playerSelection} loses against ${computerSelection}.`
+        roundScore = 0
     }
     else {
-        console.log(`You ${roundResult}! ${playerSelection} is equal to ${computerSelection}.`)
-        return 0.5
+        result.innerText = `You ${roundResult}! ${playerSelection} is equal to ${computerSelection}.`
+        roundScore = 0.5
+    }
+
+    playerScore += roundScore
+    computerScore += (1 - roundScore)
+    score.innerText = `Player: ${playerScore}\nComputer: ${computerScore}`
+
+    if (playerScore >= 5 && computerScore < 5) {
+        result.innerText = `You won! The final score was: (You) ${playerScore} to (Computer) ${computerScore}`
+    }
+    else if (computerScore >= 5 && playerScore < 5) {
+        result.innerText = `You lost! The final score was: (You) ${playerScore} to (Computer) ${computerScore}`
+    }
+    else if (computerScore >= 5 && playerScore >= 5) {
+        result.innerText = `You tied! The final score was: (You) ${playerScore} to (Computer) ${computerScore}`
     }
 }
 
@@ -86,6 +90,3 @@ function computerPlay() {
 
     return ['Rock', 'Scissors', 'Paper'][Math.floor(Math.random() * 3)]
 }
-
-// Start the game
-game()
